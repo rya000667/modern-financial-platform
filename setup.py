@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="financial-investing-platform",
+    name="financial_investing_platform",
     version="0.1.0",
     description="A platform for financial investing analysis, including Black-Scholes option pricing.",
     author="Ryan Harrington",
