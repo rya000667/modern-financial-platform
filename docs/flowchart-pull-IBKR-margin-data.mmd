@@ -1,0 +1,26 @@
+flowchart TD
+    %% ---------- Inputs ----------
+    A0[Start &nbsp;<br/>ticker, start-month, end-month]
+    A0 --> A1[Generate list of months<br/>YYYY-MM]
+
+    %% ---------- Data acquisition ----------
+    A1 --> B0[Cached locally?]
+    B0 -- yes --> B2[Load cached CSV<br/>for that month] --> C0
+    B0 -- no  --> B1[Compose IBKR URL<br/>e.g.<br/>https://www.interactivebrokers.com/...benchmarkRates?month=2025-06]
+    B1 --> B3[HTTP GET<br/>requests]
+    B3 --> B4[HTTP 200?]
+    B4 -- no --> Z1[Raise / log error]
+    B4 -- yes --> B5[Save raw CSV<br/>to cache] --> C0
+
+    %% ---------- Parsing & transform ----------
+    C0[Read CSV → DataFrame<br/>pandas]
+    C0 --> C1[Select “USD Benchmark” column]
+    C1 --> C2[Compute margin APR<br/>&nbsp;&nbsp;APR = benchmark + 1.50 pp]
+    C2 --> C3[Resample/aggregate<br/>→ month-end mean]
+    C3 --> D1{More months?}
+    D1 -- yes  --> A1
+    D1 -- no   --> D2[Concat all months<br/>→ single DataFrame]
+
+    %% ---------- Output ----------
+    D2 --> E1[Return / save CSV<br/>with month_year & ibkr_margin]
+    E1 --> F0([End])

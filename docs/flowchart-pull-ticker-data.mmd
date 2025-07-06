@@ -1,0 +1,18 @@
+flowchart TD
+    A1[Start – parse CLI args<br/>--ticker, --start, --end, --csv] --> A2[Validate dates<br/>default 2020‑05 → current month<br/>coerce to month‑start]
+    A2 --> B1[Download daily OHLCV & dividends<br/>with yfinance]
+    B1 --> B2[Resample to month‑end<br/>• Close = last trading day close<br/>• Div = Σ dividends per month]
+    B2 --> C1[Create full month index<br/>from start → end]
+    C1 --> C2[Merge price & div data<br/>• Forward‑fill price<br/>• Fill missing div with 0]
+    C2 --> D1[Map month to IBKR margin APR<br/>using hard‑coded schedule]
+    D1 --> E1[Calculate derived columns]
+    E1 -->|monthly_yield, price_change, yield_change, yield_minus_margin| F1[Round to 2 dp]
+    F1 --> G1[Build final DataFrame<br/>ordered as spec]
+    G1 --> H1[If --csv, write file<br/> yield_margin_&lt;TICKER&gt;.csv]
+    G1 --> H2[If --plot, matplotlib<br/>monthly_yield vs IBKR margin]
+    H1 --> Z[End]
+    H2 --> Z
+
+
+flowchart Two
+    A1 [Start - Map month to IBKR margin APR<br/>using hard‑coded schedule]
