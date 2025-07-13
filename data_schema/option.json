@@ -1,0 +1,23 @@
+{
+  "option": [
+    {
+        "market_price": 100,
+        "market_price_last_updated": "2023-10-01T12:00:00Z",
+        "ticker": "AAPL",
+        "average_price": 95.00,
+        "cost_basis": 9500.00,
+        "tos_last_price": 98.00,
+        "tos_delta": 0.5,
+        "tos_gamma": 0.1,
+        "tos_theta": -0.02,
+        "tos_vega": 0.15,
+        "tos_implied_volatility": 0.2,
+        "tos_open_interest": 1000,
+        "tos_bid": 97.00,
+        "tos_ask": 99.00,
+        "tos_last_updated": "2023-10-01T12:00:00Z",
+        "tos_prob_out_of_the_money": 0.75,
+        "tos_mark": 98.50
+    }
+  ]
+}

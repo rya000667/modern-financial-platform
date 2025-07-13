@@ -1,0 +1,12 @@
+{
+  "stock": [
+    {
+        "ticker": "ticker",
+        "shares": 100,
+        "average_price_paid": 25.00,
+        "cost_basis": 2500.00,
+        "current_price": 30.00,
+        "current_price_last_updated": "2023-10-01T12:00:00Z"
+    }
+  ]
+}

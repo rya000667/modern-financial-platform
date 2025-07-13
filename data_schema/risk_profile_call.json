@@ -1,0 +1,11 @@
+{
+  "risk_profile_call": [
+    {
+        "ticker": "AAPL",
+        "max_prob_out_of_the_money": 0.75,
+        "min_prob_out_of_the_money": 0.25,
+        "min_rorc": 0.05,
+        "last_updated": "2023-10-01T12:00:00Z"
+    }
+  ]
+}
