@@ -1,0 +1,21 @@
+
+How to read the diagram
+| Layer                 | What’s shown                                                                                                                                                                                                                                                                                                     |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Browser**           | Four HTML pages rendered by Jinja templates. Each read page has simple `<table>` markup (plain CSS) plus **Add / Update / 🗑 Soft‑Delete** buttons that navigate to their respective form pages. The **Options** page includes a tiny JS snippet that opens a WebSocket to stream real‑time prices.              |
+| **FastAPI routes**    | • **GET** routes render pages with `TemplateResponse`.<br>• **POST** routes handle inserts/updates & set `is_active = FALSE` for soft‑delete.<br>• **/login** issues a session cookie after validating credentials in `users`.<br>• **/ws/options** is an async WebSocket coroutine that emits JSON price ticks. |
+| **PostgreSQL schema** | Simple tables with:<br>• primary keys (`ticker`, `option_ticker`),<br>• foreign keys tying `options` + `risk_profile_call` back to `stocks`,<br>• `is_active` boolean for soft‑delete.                                                                                                                           |
+
+
+Stack recommendations (FastAPI server‑rendered)
+| Concern                    | Suggested libs / notes                                                                                                             |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| **Templates**              | `Jinja2Templates` (built‑in via Starlette)                                                                                         |
+| **Auth & sessions**        | `itsdangerous`‑signed cookie + `fastapi‑login` *or* `fastapi‑users`; store `passlib`‑hashed passwords in `users`.                  |
+| **ORM & migrations**       | `SQLAlchemy 2.x` **async** + `asyncpg`; migrations via **Alembic** (`alembic revision --autogenerate`).                            |
+| **Soft delete helper**     | Add `is_active` field; default queries filter `is_active == TRUE`.                                                                 |
+| **WebSocket price feed**   | `@app.websocket("/ws/options")`; broadcast via `starlette.websockets.WebSocket` or `fastapi‑websocket‑pubsub` if multi‑client.     |
+| **Unit tests**             | `pytest‑asyncio` for async routes, `httpx.AsyncClient` for test client.                                                            |
+| **Deployment on Pi / Mac** | `uvicorn main:app --host 0.0.0.0 --port 8000 --workers 2` (ASGI). Put Cloudflare Tunnel / Twingate in front when you move off‑LAN. |
+
+

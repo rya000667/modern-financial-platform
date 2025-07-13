@@ -1,0 +1,60 @@
+flowchart TD
+  %% =========  CLIENT‑SIDE (Jinja‑rendered HTML) =========
+  subgraph Browser
+      direction LR
+      LoginPage["/login  ▸  username / password form"]
+      StocksPage["/stocks  ▸  table:<br/>ticker · shares · avg_price_paid · cost_basis · current_price · last_updated · [🖊 Update] [➕ Add] [🗑️ Soft‑Delete]"]
+      OptionsPage["/options  ▸  table:<br/>ticker · option_ticker · qty · exp_date · avg_price · cost_basis · greeks… · [🖊] [➕] [🗑️] <br/>↳ JS opens <code>ws://…/ws/options</code> for live prices"]
+      RiskPage["/risk  ▸  table:<br/>ticker · min_prob_OTM · max_prob_OTM · min_rorc · last_updated · [🖊] [➕] [🗑️]"]
+      StockForm["/stocks/new | /stocks/{ticker}/edit  ▸  HTML form"]
+      OptionForm["/options/new | /options/{opt_tkr}/edit ▸  HTML form"]
+      RiskForm["/risk/new | /risk/{ticker}/edit ▸  HTML form"]
+  end
+
+  %% =========  ROUTES (FastAPI) =========
+  subgraph FastAPI (ASGI server)
+      direction TB
+      route_login["POST /login<br/><small>check creds ➜ create session cookie</small>"]
+      route_get_stocks["GET /stocks"]
+      route_post_stock["POST /stocks       <br/><small>INSERT</small>"]
+      route_put_stock["POST /stocks/{ticker}<br/><small>UPDATE / soft‑delete</small>"]
+      route_ws_options["WEBSOCKET /ws/options<br/><small>push JSON price ticks</small>"]
+
+      route_get_opts["GET /options"]
+      route_post_opt["POST /options"]
+      route_put_opt["POST /options/{option_ticker}"]
+
+      route_get_risk["GET /risk"]
+      route_post_risk["POST /risk"]
+      route_put_risk["POST /risk/{ticker}"]
+  end
+
+  %% =========  PERSISTENCE LAYER =========
+  subgraph PostgreSQL
+      tbl_users[(users<br/>id PK · username · pass_hash · is_active)]
+      tbl_stocks[(stocks<br/>ticker PK · shares · avg_price_paid · cost_basis · current_price · last_updated · is_active BOOL)]
+      tbl_options[(options<br/>option_ticker PK · ticker FK → stocks.ticker · quantity · expiration_date · avg_price · cost_basis · greeks… · last_updated · is_active BOOL)]
+      tbl_risk[(risk_profile_call<br/>ticker PK FK → stocks.ticker · min_prob_OTM · max_prob_OTM · min_rorc · last_updated · is_active BOOL)]
+  end
+
+  %% =========  DATA FLOW =========
+  %% authentication
+  LoginPage --> route_login --> tbl_users
+  %% read pages
+  StocksPage  --> route_get_stocks
+  OptionsPage --> route_get_opts
+  RiskPage    --> route_get_risk
+  %% add / update / soft‑delete
+  StocksPage -- [➕] --> StockForm --> route_post_stock --> tbl_stocks
+  StocksPage -- [🖊] --> StockForm --> route_put_stock  --> tbl_stocks
+  StocksPage -- [🗑️] --> route_put_stock              --> tbl_stocks
+  OptionsPage -- [➕] --> OptionForm --> route_post_opt --> tbl_options
+  OptionsPage -- [🖊] --> OptionForm --> route_put_opt  --> tbl_options
+  OptionsPage -- [🗑️] --> route_put_opt               --> tbl_options
+  RiskPage   -- [➕] --> RiskForm   --> route_post_risk --> tbl_risk
+  RiskPage   -- [🖊] --> RiskForm   --> route_put_risk  --> tbl_risk
+  RiskPage   -- [🗑️] --> route_put_risk               --> tbl_risk
+  %% websocket
+  OptionsPage -- open WS --> route_ws_options
+  route_ws_options --> tbl_options   %% (reads for context)
+
