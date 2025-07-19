@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block head_extra %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const ws = new WebSocket(`ws://${location.host}/ws/options`);
+    ws.onmessage = (ev) => console.log('Price tick:', ev.data);
+  });
+</script>
+{% endblock %}
+{% block content %}
+<h1>Options</h1>
+<a href="/options/new">Add Option</a>
+<table>
+  <tr>
+    <th>Ticker</th><th>Option Ticker</th><th>Qty</th><th>Exp Date</th><th>Avg Price</th><th>Cost Basis</th><th>Actions</th>
+  </tr>
+  {% for o in options %}
+  <tr>
+    <td>{{ o.ticker }}</td><td>{{ o.option_ticker }}</td><td>{{ o.quantity }}</td><td>{{ o.expiration_date }}</td><td>{{ o.avg_price }}</td><td>{{ o.cost_basis }}</td>
+    <td>
+      <a href="/options/{{ o.option_ticker }}/edit">🖊</a>
+      <form method="post" action="/options/{{ o.option_ticker }}" style="display:inline">
+        <input type="hidden" name="delete" value="1">
+        <button type="submit">🗑️</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

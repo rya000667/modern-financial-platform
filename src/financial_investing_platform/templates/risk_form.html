@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ form_title }}</h1>
+<form method="post" action="{{ action }}">
+  <label>Ticker: <input type="text" name="ticker" value="{{ risk.ticker|default('') }}" {% if risk %}readonly{% endif %}></label><br>
+  <label>Min Prob OTM: <input type="number" step="0.01" name="min_prob_OTM" value="{{ risk.min_prob_OTM|default('') }}"></label><br>
+  <label>Max Prob OTM: <input type="number" step="0.01" name="max_prob_OTM" value="{{ risk.max_prob_OTM|default('') }}"></label><br>
+  <label>Min RORC: <input type="number" step="0.01" name="min_rorc" value="{{ risk.min_rorc|default('') }}"></label><br>
+  <button type="submit">Submit</button>
+</form>
+{% endblock %}

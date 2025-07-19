@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ form_title }}</h1>
+<form method="post" action="{{ action }}">
+  <label>Option Ticker: <input type="text" name="option_ticker" value="{{ option.option_ticker|default('') }}" {% if option %}readonly{% endif %}></label><br>
+  <label>Ticker: <input type="text" name="ticker" value="{{ option.ticker|default('') }}"></label><br>
+  <label>Quantity: <input type="number" name="quantity" value="{{ option.quantity|default('') }}"></label><br>
+  <label>Expiration Date: <input type="date" name="expiration_date" value="{{ option.expiration_date|default('') }}"></label><br>
+  <label>Avg Price: <input type="number" step="0.01" name="avg_price" value="{{ option.avg_price|default('') }}"></label><br>
+  <label>Cost Basis: <input type="number" step="0.01" name="cost_basis" value="{{ option.cost_basis|default('') }}"></label><br>
+  <button type="submit">Submit</button>
+</form>
+{% endblock %}
