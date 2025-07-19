@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Stocks</h1>
+<a href="/stocks/new">Add Stock</a>
+<table>
+  <tr>
+    <th>Ticker</th><th>Shares</th><th>Avg Price Paid</th><th>Cost Basis</th><th>Current Price</th><th>Last Updated</th><th>Actions</th>
+  </tr>
+  {% for s in stocks %}
+  <tr>
+    <td>{{ s.ticker }}</td><td>{{ s.shares }}</td><td>{{ s.avg_price_paid }}</td><td>{{ s.cost_basis }}</td><td>{{ s.current_price }}</td><td>{{ s.last_updated }}</td>
+    <td>
+      <a href="/stocks/{{ s.ticker }}/edit">🖊</a>
+      <form method="post" action="/stocks/{{ s.ticker }}" style="display:inline">
+        <input type="hidden" name="delete" value="1">
+        <button type="submit">🗑️</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

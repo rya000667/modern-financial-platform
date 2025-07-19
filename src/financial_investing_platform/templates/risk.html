@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Risk Profiles</h1>
+<a href="/risk/new">Add Risk</a>
+<table>
+  <tr>
+    <th>Ticker</th><th>Min Prob OTM</th><th>Max Prob OTM</th><th>Min RORC</th><th>Last Updated</th><th>Actions</th>
+  </tr>
+  {% for r in risk_profiles %}
+  <tr>
+    <td>{{ r.ticker }}</td><td>{{ r.min_prob_OTM }}</td><td>{{ r.max_prob_OTM }}</td><td>{{ r.min_rorc }}</td><td>{{ r.last_updated }}</td>
+    <td>
+      <a href="/risk/{{ r.ticker }}/edit">🖊</a>
+      <form method="post" action="/risk/{{ r.ticker }}" style="display:inline">
+        <input type="hidden" name="delete" value="1">
+        <button type="submit">🗑️</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}
