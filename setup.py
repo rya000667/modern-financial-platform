@@ -9,9 +9,16 @@ setup(
     package_dir={"": "src"},
     scripts=[
         "scripts/blackScholes.py",
-        "scripts/fidelity_wpx_cash_dividends.py"
+        "scripts/fidelity_wpx_cash_dividends.py",
+        "scripts/interactive_brokers_account_summary.py",
+        "scripts/interactive_brokers_flex_statements.py"
     ],
-    install_requires=[],
+    install_requires=[
+        "requests",
+        "pandas",
+        "lxml",
+        "ibflex",
+    ],
     python_requires=">=3.10",
     classifiers=[
         "Programming Language :: Python :: 3",
